@@ -1,5 +1,5 @@
 {
-    "name": "ruogoo/laravel-opensearch",
+    "name": "xiaoguo/laravel-opensearch",
     "description": "Aliyun OpenSearch for Laravel.",
     "type": "library",
     "license": "MIT",
@@ -16,13 +16,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Ruogoo\\OpenSearch\\": "src/"
+            "xiaoguo\\OpenSearch\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Ruogoo\\OpenSearch\\OpenSearchServiceProvider"
+                "xiaoguo\\OpenSearch\\OpenSearchServiceProvider"
             ]
         }
     }

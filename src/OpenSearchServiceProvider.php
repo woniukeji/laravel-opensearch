@@ -7,7 +7,7 @@
  * Copyright (C) HyanCat. All rights reserved.
  */
 
-namespace Ruogoo\OpenSearch;
+namespace xiaoguo\OpenSearch;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\EngineManager;

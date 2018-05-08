@@ -14,7 +14,7 @@ Laravel Scout 的 阿里云 Open Search 驱动。
 
 2. Laravel 5.5 以下，`config/app.php`  中添加 `service provider`
 
-        Ruogoo\\OpenSearch\\OpenSearchServiceProvider
+        xiaoguo\\OpenSearch\\OpenSearchServiceProvider
 
     Laravel 5.5 及以上，自动加载 `service provider`，无需手动添加。
 

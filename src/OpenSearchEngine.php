@@ -7,7 +7,7 @@
  * Copyright (C) HyanCat. All rights reserved.
  */
 
-namespace Ruogoo\OpenSearch;
+namespace xiaoguo\OpenSearch;
 
 require_once __DIR__ . '/../sdk/OpenSearch/Autoloader/Autoloader.php';
 
