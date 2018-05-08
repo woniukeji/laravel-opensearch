@@ -1,5 +1,5 @@
 {
-    "name": "ruogoo/laravel-scout-opensearch",
+    "name": "ruogoo/laravel-opensearch",
     "description": "Aliyun OpenSearch for Laravel.",
     "type": "library",
     "license": "MIT",
