@@ -36,6 +36,7 @@ class OpenSearchEngine extends Engine
         $host            = $config->get('scout.opensearch.host');
         $this->config    = $config;
 
+
         $this->client = new OpenSearchClient($accessKeyID, $accessKeySecret, $host);
 
         $this->documentClient = new DocumentClient($this->client);
@@ -59,6 +60,7 @@ class OpenSearchEngine extends Engine
 
     public function paginate(Builder $builder, $perPage, $page)
     {
+        ;
         return $this->performSearch($builder, ($page - 1) * $perPage, $perPage);
     }
 
@@ -107,6 +109,7 @@ class OpenSearchEngine extends Engine
         if ($models->count() === 0) {
             return;
         }
+
         $appName   = $models->first()->openSearchAppName();
         $tableName = $models->first()->getTable();
 
@@ -128,9 +131,26 @@ class OpenSearchEngine extends Engine
 
     private function performSearch(Builder $builder, $from, $count)
     {
+
         $params = new SearchParamsBuilder();
         $params->setStart($from);
         $params->setHits($count);
+        $params->setFilter('id>0');
+        foreach ($builder->wheres as $index => $where) {
+            if(is_array($where)){
+                foreach ($where as $item => $value){
+                    if ($item==0){
+                        $params->addFilter('price>='.$value);
+                    }else{
+                        $params->addFilter('price<='.$value);
+                    }
+                }
+            }else{
+                $params->addFilter($index.'='.$where);
+            }
+        }
+
+
         $params->setAppName($builder->model->openSearchAppName());
         if ($builder->index) {
             $params->setQuery("$builder->index:'$builder->query'");
@@ -138,10 +158,13 @@ class OpenSearchEngine extends Engine
             $params->setQuery("'$builder->query'");
         }
         $params->setFormat('fullJson');
+
+
         $params->addSort($builder->model->sortField(), SearchParamsBuilder::SORT_DECREASE);
 
         return $this->searchClient->execute($params->build());
     }
+
 
     private function checkResults($results)
     {
