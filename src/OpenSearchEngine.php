@@ -85,9 +85,8 @@ class OpenSearchEngine extends Engine
         $models = $model->whereIn($model->getQualifiedKeyName(), $keys)->get()->keyBy($model->getKeyName());
 
         return collect(array_get($result, 'result.items'))->map(function ($item) use ($model, $result) {
-            $key = $item['fields']['id'];
-
-            return collect(array_get($result, 'result.items'));
+            $key = $item['fields'];
+            return collect($key);
 
         })->filter()->values();
     }
