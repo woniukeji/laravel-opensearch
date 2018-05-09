@@ -84,12 +84,11 @@ class OpenSearchEngine extends Engine
         $keys   = collect(array_get($result, 'result.items'))->pluck('fields.id')->values()->all();
         $models = $model->whereIn($model->getQualifiedKeyName(), $keys)->get()->keyBy($model->getKeyName());
 
-        return collect(array_get($result, 'result.items'))->map(function ($item) use ($model, $models) {
+        return collect(array_get($result, 'result.items'))->map(function ($item) use ($model, $result) {
             $key = $item['fields']['id'];
 
-            if (isset($models[$key])) {
-                return $models[$key];
-            }
+            return collect(array_get($result, 'result.items'));
+
         })->filter()->values();
     }
 
