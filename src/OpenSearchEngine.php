@@ -157,8 +157,10 @@ class OpenSearchEngine extends Engine
         }
         $params->setFormat('fullJson');
 
+        if ($builder->model->sortField()){
+            $params->addSort($builder->model->sortField(), SearchParamsBuilder::SORT_DECREASE);
+        }
 
-        $params->addSort($builder->model->sortField(), SearchParamsBuilder::SORT_DECREASE);
 
         return $this->searchClient->execute($params->build());
     }
