@@ -60,7 +60,7 @@ class OpenSearchEngine extends Engine
 
     public function paginate(Builder $builder, $perPage, $page)
     {
-        ;
+
         return $this->performSearch($builder, ($page - 1) * $perPage, $perPage);
     }
 
@@ -85,6 +85,7 @@ class OpenSearchEngine extends Engine
         $models = $model->whereIn($model->getQualifiedKeyName(), $keys)->get()->keyBy($model->getKeyName());
 
         return collect(array_get($result, 'result.items'))->map(function ($item) use ($model, $result) {
+            dd($result);
             $key = $item['fields'];
             return collect($key);
 
@@ -134,18 +135,28 @@ class OpenSearchEngine extends Engine
         $params->setStart($from);
         $params->setHits($count);
         $params->setFilter('id>0');
+
         foreach ($builder->wheres as $index => $where) {
-            if(is_array($where)){
-                foreach ($where as $item => $value){
-                    if ($item==0){
-                        $params->addFilter('price>='.$value);
+            if($index=='price'){
+                $params->addFilter('price>='.$where[0]);
+                $params->addFilter('price<='.$where[1],'AND');
+            }elseif ($index=='school_ids')
+            {
+                for ($x=0; $x<count($where); $x++) {
+                    if ($x==0){
+                        //学校之间是or的关系和其他筛选条件之间是and关系,故此加入小括号
+                        $params->addFilter('(school_id='.$where[$x]);
                     }else{
-                        $params->addFilter('price<='.$value);
+                        $params->addFilter('school_id='.$where[$x].')','OR');
+
                     }
                 }
+
             }else{
                 $params->addFilter($index.'='.$where);
+
             }
+
         }
 
 
@@ -157,10 +168,16 @@ class OpenSearchEngine extends Engine
         }
         $params->setFormat('fullJson');
 
-        if ($builder->model->sortField()){
-            $params->addSort($builder->model->sortField(), SearchParamsBuilder::SORT_DECREASE);
-        }
+        foreach ($builder->orders as $index => $order) {
+            $orderType=1;
 
+            if ($order['direction']=='desc'){
+                $orderType=0;
+            }
+            $params->addSort($order['column'], $orderType);
+
+
+        }
 
         return $this->searchClient->execute($params->build());
     }

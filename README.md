@@ -27,8 +27,8 @@ Laravel Scout 的 阿里云 Open Search 驱动。
 
 ## Issue
 
-此 package 目前主要自用，修改自https://github.com/ruogoo/laravel-scout-opensearch
-由于个人需求不同 稍作修改
+此 package 目前主要自用，有需要使用的需要自行修改一些参数传递上的设置,修改自https://github.com/ruogoo/laravel-scout-opensearch
+
 
 [email:hyancat@live.cn](mailto:hyancat@live.cn)
 
