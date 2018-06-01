@@ -145,7 +145,7 @@ class OpenSearchEngine extends Engine
             elseif ($index=='school_ids')
             {
                 if (count($where)==1){
-                    $params->addFilter('school_id='.$where[$x]);
+                    $params->addFilter('school_id='.$where[0]);
                 }else{
                     for ($x=0; $x<count($where); $x++) {
                         if ($x==0){
