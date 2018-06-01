@@ -136,10 +136,12 @@ class OpenSearchEngine extends Engine
         $params->setFilter('id>0');
 
         foreach ($builder->wheres as $index => $where) {
-            if($index=='price'){
-                $params->addFilter('price>='.$where[0]);
-                $params->addFilter('price<='.$where[1],'AND');
-            }elseif ($index=='school_ids')
+            if($index=='min_price'){
+                $params->addFilter('price>='.$where);
+            }elseif ($index=='max_price'){
+                $params->addFilter('price<='.$where);
+            }
+            elseif ($index=='school_ids')
             {
                 for ($x=0; $x<count($where); $x++) {
                     if ($x==0){
@@ -150,10 +152,8 @@ class OpenSearchEngine extends Engine
 
                     }
                 }
-
             }else{
                 $params->addFilter($index.'='.$where);
-
             }
 
         }
