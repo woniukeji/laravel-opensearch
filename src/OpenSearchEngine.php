@@ -151,16 +151,14 @@ class OpenSearchEngine extends Engine
                     }
                     else if (count($where)-1==$x){
                         $params->addFilter('school_id='.$where[$x].')','OR');
-
                     }else{
                         $params->addFilter('school_id='.$where[$x],'OR');
                     }
                 }
-            }else{
-
+            }
+            else{
                 $params->addFilter($index.'='.$where);
             }
-
         }
 
 
