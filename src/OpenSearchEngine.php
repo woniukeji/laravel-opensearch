@@ -144,21 +144,28 @@ class OpenSearchEngine extends Engine
             }
             elseif ($index=='school_ids')
             {
-                for ($x=0; $x<count($where); $x++) {
-                    if ($x==0){
-                        //学校之间是or的关系和其他筛选条件之间是and关系,故此加入小括号
-                        $params->addFilter('(school_id='.$where[$x]);
-                    }
-                    else if (count($where)-1==$x){
-                        $params->addFilter('school_id='.$where[$x].')','OR');
-                    }else{
-                        $params->addFilter('school_id='.$where[$x],'OR');
+                if (count($where)==1){
+                    $params->addFilter('school_id='.$where[$x]);
+                }else{
+                    for ($x=0; $x<count($where); $x++) {
+                        if ($x==0){
+                            //学校之间是or的关系和其他筛选条件之间是and关系,故此加入小括号
+                            $params->addFilter('(school_id='.$where[$x]);
+                        }
+                        else if (count($where)-1==$x){
+                            $params->addFilter('school_id='.$where[$x].')','OR');
+
+                        }else{
+                            $params->addFilter('school_id='.$where[$x],'OR');
+                        }
                     }
                 }
-            }
-            else{
+
+            }else{
+
                 $params->addFilter($index.'='.$where);
             }
+
         }
 
 
