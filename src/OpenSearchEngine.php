@@ -136,6 +136,7 @@ class OpenSearchEngine extends Engine
         $params->setFilter('id>0');
 
         foreach ($builder->wheres as $index => $where) {
+
             if($index=='min_price'){
                 $params->addFilter('price>='.$where);
             }elseif ($index=='max_price'){
@@ -147,12 +148,16 @@ class OpenSearchEngine extends Engine
                     if ($x==0){
                         //学校之间是or的关系和其他筛选条件之间是and关系,故此加入小括号
                         $params->addFilter('(school_id='.$where[$x]);
-                    }else{
+                    }
+                    else if (count($where)-1==$x){
                         $params->addFilter('school_id='.$where[$x].')','OR');
 
+                    }else{
+                        $params->addFilter('school_id='.$where[$x],'OR');
                     }
                 }
             }else{
+
                 $params->addFilter($index.'='.$where);
             }
 
@@ -174,7 +179,6 @@ class OpenSearchEngine extends Engine
                 $orderType=0;
             }
             $params->addSort($order['column'], $orderType);
-
 
         }
 
