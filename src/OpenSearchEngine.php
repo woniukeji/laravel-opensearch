@@ -31,16 +31,16 @@ class OpenSearchEngine extends Engine
 
     public function __construct(Repository $config)
     {
-        $accessKeyID     = $config->get('scout.opensearch.accessKeyID');
+        $accessKeyID = $config->get('scout.opensearch.accessKeyID');
         $accessKeySecret = $config->get('scout.opensearch.accessKeySecret');
-        $host            = $config->get('scout.opensearch.host');
-        $this->config    = $config;
+        $host = $config->get('scout.opensearch.host');
+        $this->config = $config;
 
 
         $this->client = new OpenSearchClient($accessKeyID, $accessKeySecret, $host);
 
         $this->documentClient = new DocumentClient($this->client);
-        $this->searchClient   = new SearchClient($this->client);
+        $this->searchClient = new SearchClient($this->client);
     }
 
     public function update($models)
@@ -81,7 +81,7 @@ class OpenSearchEngine extends Engine
         if (array_get($result, 'result.num', 0) === 0) {
             return collect();
         }
-        $keys   = collect(array_get($result, 'result.items'))->pluck('fields.id')->values()->all();
+        $keys = collect(array_get($result, 'result.items'))->pluck('fields.id')->values()->all();
         $models = $model->whereIn($model->getQualifiedKeyName(), $keys)->get()->keyBy($model->getKeyName());
 
         return collect(array_get($result, 'result.items'))->map(function ($item) use ($model, $result) {
@@ -100,7 +100,7 @@ class OpenSearchEngine extends Engine
 
     /**
      * @param \Illuminate\Database\Eloquent\Collection $models
-     * @param string                                   $cmd
+     * @param string $cmd
      */
     private function performDocumentsCommand($models, string $cmd)
     {
@@ -108,7 +108,7 @@ class OpenSearchEngine extends Engine
             return;
         }
 
-        $appName   = $models->first()->openSearchAppName();
+        $appName = $models->first()->openSearchAppName();
         $tableName = $models->first()->getTable();
 
         $docs = $models->map(function ($model) use ($cmd) {
@@ -119,7 +119,7 @@ class OpenSearchEngine extends Engine
             }
 
             return [
-                'cmd'    => $cmd,
+                'cmd' => $cmd,
                 'fields' => $fields,
             ];
         });
@@ -137,33 +137,48 @@ class OpenSearchEngine extends Engine
 
         foreach ($builder->wheres as $index => $where) {
 
-            if($index=='min_price'){
-                $params->addFilter('price>='.$where);
-            }elseif ($index=='max_price'){
-                $params->addFilter('price<='.$where);
-            }
-            elseif ($index=='school_ids')
-            {
-                if (count($where)==1){
-                    $params->addFilter('school_id='.$where[0]);
-                }else{
-                    for ($x=0; $x<count($where); $x++) {
-                        if ($x==0){
+            if ($index == 'min_price') {
+                $params->addFilter('price>=' . $where);
+            } elseif ($index == 'max_price') {
+                $params->addFilter('price<=' . $where);
+            } elseif ($index == 'school_ids') {
+                if (count($where) == 1) {
+                    $params->addFilter('school_id=' . $where[0]);
+                } else {
+                    for ($x = 0; $x < count($where); $x++) {
+                        if ($x == 0) {
                             //学校之间是or的关系和其他筛选条件之间是and关系,故此加入小括号
-                            $params->addFilter('(school_id='.$where[$x]);
-                        }
-                        else if (count($where)-1==$x){
-                            $params->addFilter('school_id='.$where[$x].')','OR');
+                            $params->addFilter('(school_id=' . $where[$x]);
+                        } else {
+                            if (count($where) - 1 == $x) {
+                                $params->addFilter('school_id=' . $where[$x] . ')', 'OR');
 
-                        }else{
-                            $params->addFilter('school_id='.$where[$x],'OR');
+                            } else {
+                                $params->addFilter('school_id=' . $where[$x], 'OR');
+                            }
                         }
                     }
                 }
 
-            }else{
+            } elseif ($index == 'school_type') {
+                if (count($where) == 1) {
+                    $params->addFilter('school_type=' . $where[0]);
+                } else {
+                    for ($x = 0; $x < count($where); $x++) {
+                        if ($x == 0) {
+                            $params->addFilter('(school_type=' . $where[$x]);
+                        } else {
+                            if (count($where) - 1 == $x) {
+                                $params->addFilter('school_type=' . $where[$x] . ')', 'OR');
 
-                $params->addFilter($index.'='.$where);
+                            } else {
+                                $params->addFilter('school_type=' . $where[$x], 'OR');
+                            }
+                        }
+                    }
+                }
+            }else {
+                $params->addFilter($index . '=' . $where);
             }
 
         }
@@ -178,10 +193,10 @@ class OpenSearchEngine extends Engine
         $params->setFormat('fullJson');
 
         foreach ($builder->orders as $index => $order) {
-            $orderType=1;
+            $orderType = 1;
 
-            if ($order['direction']=='desc'){
-                $orderType=0;
+            if ($order['direction'] == 'desc') {
+                $orderType = 0;
             }
             $params->addSort($order['column'], $orderType);
 
